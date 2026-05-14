@@ -1,0 +1,28 @@
+{
+  "name": "quan-ly-nhan-vien",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HR management and internal service desk with PostgreSQL backend.",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "backend:dev": "node --watch backend/src/server.js",
+    "backend:start": "node backend/src/server.js",
+    "backend:migrate": "node backend/db/migrate.js",
+    "backend:seed": "node backend/db/seed.js",
+    "backend:init-production": "node backend/db/init-production.js",
+    "backend:clear-demo": "node backend/db/clear-demo.js",
+    "backend:check": "node --check backend/src/server.js && node --check backend/db/migrate.js && node --check backend/db/seed.js && node --check backend/db/init-production.js && node --check backend/db/clear-demo.js",
+    "test": "npm run backend:check && node --test \"backend/tests/unit/**/*.test.js\"",
+    "test:api": "node --test \"backend/tests/api/**/*.test.js\"",
+    "test:e2e": "npm run test:api",
+    "test:all": "npm test && npm run test:api"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.13.1"
+  }
+}

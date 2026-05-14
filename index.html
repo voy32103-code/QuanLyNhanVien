@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuanLyNV - Quản lý nhân viên</title>
+  <link rel="stylesheet" href="./assets/css/tokens.css">
+  <link rel="stylesheet" href="./assets/css/base.css">
+  <link rel="stylesheet" href="./assets/css/layout.css">
+  <link rel="stylesheet" href="./assets/css/components.css">
+  <link rel="stylesheet" href="./assets/css/responsive.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Điều hướng chính">
+      <a class="brand" href="#overview" aria-label="QuanLyNV">
+        <span class="brand-mark">NV</span>
+        <span>
+          <strong>QuanLyNV</strong>
+          <small>People Operations</small>
+        </span>
+      </a>
+
+      <nav class="nav-list" aria-label="Khu vực làm việc">
+        <a class="nav-link is-active" href="#overview" data-view-link="overview">Tổng quan</a>
+        <a class="nav-link" href="#employees" data-view-link="employees">Nhân viên</a>
+        <a class="nav-link" href="#services" data-view-link="services">Dịch vụ</a>
+        <a class="nav-link" href="#departments" data-view-link="departments">Phòng ban</a>
+        <a class="nav-link" href="#reports" data-view-link="reports">Báo cáo</a>
+      </nav>
+
+      <div class="sidebar-note">
+        <span class="note-label">Phiên bản</span>
+        <strong>2026.05</strong>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Bảng điều khiển nội bộ</p>
+          <h1>Trung tâm quản lý nhân sự</h1>
+        </div>
+        <div class="topbar-actions">
+          <label class="search-box" for="globalSearch">
+            <span>Tìm</span>
+            <input id="globalSearch" type="search" placeholder="Tên, email, chức vụ, yêu cầu..." autocomplete="off">
+          </label>
+          <span class="auth-chip" id="authUserLabel">Chưa đăng nhập</span>
+          <button class="button button-secondary" type="button" data-open-login>Đăng nhập</button>
+          <button class="button button-secondary" type="button" data-logout hidden>Đăng xuất</button>
+          <button class="button button-secondary" type="button" data-open-request-dialog data-permission="createServiceRequest">Tạo yêu cầu</button>
+          <button class="button button-primary" type="button" data-open-dialog data-permission="manageEmployees">Thêm nhân viên</button>
+        </div>
+      </header>
+
+      <section class="view is-active" id="overview" aria-labelledby="overviewTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Hôm nay</p>
+            <h2 id="overviewTitle">Tổng quan vận hành</h2>
+          </div>
+          <button class="button button-ghost" type="button" data-reset-data>Tải lại dữ liệu</button>
+        </div>
+
+        <div class="metrics-grid" id="metricsGrid" aria-label="Chỉ số nhanh"></div>
+
+        <div class="dashboard-grid">
+          <section class="panel" aria-labelledby="deptChartTitle">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Phân bổ</p>
+                <h3 id="deptChartTitle">Hiệu suất phòng ban</h3>
+              </div>
+            </div>
+            <div class="chart-list" id="departmentChart"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="timelineTitle">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Việc cần chú ý</p>
+                <h3 id="timelineTitle">Lịch công việc</h3>
+              </div>
+            </div>
+            <div class="timeline" id="timelineList"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="servicePulseTitle">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Service Desk</p>
+                <h3 id="servicePulseTitle">Yêu cầu cần xử lý</h3>
+              </div>
+              <a class="button button-secondary" href="#services" data-view-link="services">Mở</a>
+            </div>
+            <div class="report-list" id="servicePulse"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="employees" aria-labelledby="employeesTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Danh sách</p>
+            <h2 id="employeesTitle">Quản lý nhân viên</h2>
+          </div>
+          <div class="button-group">
+            <button class="button button-secondary" type="button" data-export-csv>Xuất CSV</button>
+            <button class="button button-primary" type="button" data-open-dialog data-permission="manageEmployees">Thêm mới</button>
+          </div>
+        </div>
+
+        <div class="toolbar" aria-label="Bộ lọc nhân viên">
+          <label>
+            Phòng ban
+            <select id="departmentFilter"></select>
+          </label>
+          <label>
+            Trạng thái
+            <select id="statusFilter">
+              <option value="all">Tất cả</option>
+              <option value="active">Đang làm</option>
+              <option value="probation">Thử việc</option>
+              <option value="leave">Nghỉ phép</option>
+            </select>
+          </label>
+          <label>
+            Sắp xếp
+            <select id="sortBy">
+              <option value="name">Tên A-Z</option>
+              <option value="department">Phòng ban</option>
+              <option value="performance">Hiệu suất cao</option>
+              <option value="startDate">Ngày vào mới</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="table-panel">
+          <div class="table-summary" id="tableSummary"></div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Nhân viên</th>
+                  <th scope="col">Phòng ban</th>
+                  <th scope="col">Chức vụ</th>
+                  <th scope="col">Hiệu suất</th>
+                  <th scope="col">Trạng thái</th>
+                  <th scope="col">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="employeeTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="services" aria-labelledby="servicesTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Business service</p>
+            <h2 id="servicesTitle">Dịch vụ nội bộ & SLA</h2>
+          </div>
+          <div class="button-group">
+            <button class="button button-secondary" type="button" data-export-service-csv>Xuất service CSV</button>
+            <button class="button button-primary" type="button" data-open-request-dialog data-permission="createServiceRequest">Tạo yêu cầu</button>
+          </div>
+        </div>
+
+        <div class="metrics-grid" id="serviceMetricsGrid" aria-label="Chỉ số dịch vụ"></div>
+
+        <div class="toolbar" aria-label="Bộ lọc yêu cầu dịch vụ">
+          <label>
+            Nhóm dịch vụ
+            <select id="serviceCategoryFilter"></select>
+          </label>
+          <label>
+            Trạng thái
+            <select id="serviceStatusFilter">
+              <option value="all">Tất cả</option>
+              <option value="open">Mới</option>
+              <option value="inProgress">Đang xử lý</option>
+              <option value="waiting">Chờ phản hồi</option>
+              <option value="resolved">Đã xong</option>
+            </select>
+          </label>
+          <label>
+            Ưu tiên
+            <select id="servicePriorityFilter">
+              <option value="all">Tất cả</option>
+              <option value="urgent">Khẩn cấp</option>
+              <option value="high">Cao</option>
+              <option value="normal">Bình thường</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="service-grid">
+          <section class="table-panel" aria-labelledby="serviceTableTitle">
+            <div class="table-summary" id="serviceTableTitle">Danh sách yêu cầu</div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Yêu cầu</th>
+                    <th scope="col">Người gửi</th>
+                    <th scope="col">Nhóm</th>
+                    <th scope="col">SLA</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="serviceTable"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="serviceCategoryTitle">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Theo nhóm</p>
+                <h3 id="serviceCategoryTitle">Hiệu quả xử lý</h3>
+              </div>
+            </div>
+            <div class="chart-list" id="serviceCategoryChart"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="departments" aria-labelledby="departmentsTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Cơ cấu</p>
+            <h2 id="departmentsTitle">Danh mục nền</h2>
+          </div>
+          <div class="button-group">
+            <button class="button button-secondary" type="button" data-open-category-dialog data-permission="manageCatalog">Thêm nhóm dịch vụ</button>
+            <button class="button button-primary" type="button" data-open-department-dialog data-permission="manageCatalog">Thêm phòng ban</button>
+          </div>
+        </div>
+        <div class="department-grid" id="departmentCards"></div>
+        <div class="catalog-grid">
+          <section class="table-panel" aria-labelledby="departmentCatalogTitle">
+            <div class="table-summary" id="departmentCatalogTitle">Quản lý phòng ban</div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Phòng ban</th>
+                    <th scope="col">Phụ trách</th>
+                    <th scope="col">Nhân viên</th>
+                    <th scope="col">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="departmentAdminTable"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="table-panel" aria-labelledby="categoryCatalogTitle">
+            <div class="table-summary" id="categoryCatalogTitle">Quản lý nhóm dịch vụ</div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Nhóm dịch vụ</th>
+                    <th scope="col">Phụ trách</th>
+                    <th scope="col">SLA</th>
+                    <th scope="col">Ticket</th>
+                    <th scope="col">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="serviceCategoryAdminTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="reports" aria-labelledby="reportsTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Theo dõi</p>
+            <h2 id="reportsTitle">Báo cáo nhân sự</h2>
+          </div>
+        </div>
+        <div class="reports-grid">
+          <section class="panel" aria-labelledby="payrollTitle">
+            <div class="panel-header">
+              <h3 id="payrollTitle">Quỹ lương theo phòng ban</h3>
+            </div>
+            <div class="report-list" id="payrollReport"></div>
+          </section>
+          <section class="panel" aria-labelledby="talentTitle">
+            <div class="panel-header">
+              <h3 id="talentTitle">Nhân sự nổi bật</h3>
+            </div>
+            <div class="report-list" id="talentReport"></div>
+          </section>
+          <section class="panel" aria-labelledby="serviceReportTitle">
+            <div class="panel-header">
+              <h3 id="serviceReportTitle">SLA dịch vụ nội bộ</h3>
+            </div>
+            <div class="report-list" id="serviceReport"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="employee-dialog" id="loginDialog">
+    <form method="dialog" id="loginForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Bảo mật</p>
+          <h2>Đăng nhập</h2>
+        </div>
+        <button class="icon-button" value="cancel" type="button" data-close-login aria-label="Đóng">×</button>
+      </div>
+
+      <div class="form-alert" id="loginFormAlert" role="alert" hidden></div>
+
+      <div class="form-grid">
+        <label class="wide-field">
+          Email
+          <input id="loginEmail" name="email" type="email" autocomplete="username" required maxlength="120">
+        </label>
+        <label class="wide-field">
+          Mật khẩu
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required minlength="8">
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button button-ghost" type="button" data-close-login>Hủy</button>
+        <button class="button button-primary" type="submit">Đăng nhập</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="employee-dialog" id="employeeDialog">
+    <form method="dialog" id="employeeForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Hồ sơ</p>
+          <h2 id="dialogTitle">Thêm nhân viên</h2>
+        </div>
+        <button class="icon-button" value="cancel" type="button" data-close-dialog aria-label="Đóng">×</button>
+      </div>
+
+      <div class="form-alert" id="formAlert" role="alert" hidden></div>
+
+      <input type="hidden" id="employeeId" name="id">
+
+      <div class="form-grid">
+        <label>
+          Họ và tên
+          <input id="employeeName" name="name" type="text" required maxlength="80">
+        </label>
+        <label>
+          Email
+          <input id="employeeEmail" name="email" type="email" required maxlength="120">
+        </label>
+        <label>
+          Điện thoại
+          <input id="employeePhone" name="phone" type="tel" required maxlength="24">
+        </label>
+        <label>
+          Phòng ban
+          <select id="employeeDepartment" name="department" required></select>
+        </label>
+        <label>
+          Chức vụ
+          <input id="employeeRole" name="role" type="text" required maxlength="80">
+        </label>
+        <label>
+          Lương tháng
+          <input id="employeeSalary" name="salary" type="number" min="1000000" step="500000" required>
+        </label>
+        <label>
+          Ngày vào làm
+          <input id="employeeStartDate" name="startDate" type="date" required>
+        </label>
+        <label>
+          Trạng thái
+          <select id="employeeStatus" name="status" required>
+            <option value="active">Đang làm</option>
+            <option value="probation">Thử việc</option>
+            <option value="leave">Nghỉ phép</option>
+          </select>
+        </label>
+        <label class="wide-field">
+          Hiệu suất
+          <input id="employeePerformance" name="performance" type="range" min="40" max="100" step="1" value="80">
+          <span class="range-value"><output id="performanceOutput">80</output>%</span>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button button-ghost" type="button" data-close-dialog>Hủy</button>
+        <button class="button button-primary" type="submit">Lưu hồ sơ</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="employee-dialog" id="requestDialog">
+    <form method="dialog" id="requestForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Service request</p>
+          <h2 id="requestDialogTitle">Tạo yêu cầu</h2>
+        </div>
+        <button class="icon-button" value="cancel" type="button" data-close-request-dialog aria-label="Đóng">×</button>
+      </div>
+
+      <div class="form-alert" id="requestFormAlert" role="alert" hidden></div>
+
+      <input type="hidden" id="requestId" name="id">
+
+      <div class="form-grid">
+        <label class="wide-field">
+          Tiêu đề
+          <input id="requestTitle" name="title" type="text" required maxlength="120">
+        </label>
+        <label>
+          Người yêu cầu
+          <select id="requesterId" name="requesterId" required></select>
+        </label>
+        <label>
+          Nhóm dịch vụ
+          <select id="requestCategory" name="category" required></select>
+        </label>
+        <label>
+          Người phụ trách
+          <input id="requestOwner" name="owner" type="text" required maxlength="80">
+        </label>
+        <label>
+          Ưu tiên
+          <select id="requestPriority" name="priority" required>
+            <option value="normal">Bình thường</option>
+            <option value="high">Cao</option>
+            <option value="urgent">Khẩn cấp</option>
+          </select>
+        </label>
+        <label>
+          Trạng thái
+          <select id="requestStatus" name="status" required>
+            <option value="open">Mới</option>
+            <option value="inProgress">Đang xử lý</option>
+            <option value="waiting">Chờ phản hồi</option>
+            <option value="resolved">Đã xong</option>
+          </select>
+        </label>
+        <label>
+          Ngày tạo
+          <input id="requestCreatedAt" name="createdAt" type="date" required>
+        </label>
+        <label>
+          Hạn xử lý
+          <input id="requestDueDate" name="dueDate" type="date" required>
+        </label>
+        <label class="wide-field">
+          Mô tả
+          <input id="requestDescription" name="description" type="text" required maxlength="220">
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button button-ghost" type="button" data-close-request-dialog>Hủy</button>
+        <button class="button button-primary" type="submit">Lưu yêu cầu</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="employee-dialog" id="departmentDialog">
+    <form method="dialog" id="departmentForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Danh mục</p>
+          <h2 id="departmentDialogTitle">Thêm phòng ban</h2>
+        </div>
+        <button class="icon-button" value="cancel" type="button" data-close-department-dialog aria-label="Đóng">×</button>
+      </div>
+
+      <div class="form-alert" id="departmentFormAlert" role="alert" hidden></div>
+
+      <input type="hidden" id="departmentId" name="id">
+
+      <div class="form-grid">
+        <label>
+          Tên phòng ban
+          <input id="departmentName" name="name" type="text" required maxlength="80">
+        </label>
+        <label>
+          Người phụ trách
+          <input id="departmentOwner" name="owner" type="text" required maxlength="80">
+        </label>
+        <label>
+          Màu hiển thị
+          <input id="departmentColor" name="color" type="color" value="#0f766e" required>
+        </label>
+        <label class="wide-field">
+          Mô tả
+          <input id="departmentDescription" name="description" type="text" required maxlength="180">
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button button-ghost" type="button" data-close-department-dialog>Hủy</button>
+        <button class="button button-primary" type="submit">Lưu phòng ban</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="employee-dialog" id="categoryDialog">
+    <form method="dialog" id="categoryForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Danh mục</p>
+          <h2 id="categoryDialogTitle">Thêm nhóm dịch vụ</h2>
+        </div>
+        <button class="icon-button" value="cancel" type="button" data-close-category-dialog aria-label="Đóng">×</button>
+      </div>
+
+      <div class="form-alert" id="categoryFormAlert" role="alert" hidden></div>
+
+      <input type="hidden" id="categoryId" name="id">
+
+      <div class="form-grid">
+        <label>
+          Nhóm dịch vụ
+          <input id="categoryName" name="name" type="text" required maxlength="80">
+        </label>
+        <label>
+          Người phụ trách
+          <input id="categoryOwner" name="owner" type="text" required maxlength="80">
+        </label>
+        <label>
+          SLA mặc định (giờ)
+          <input id="categorySlaHours" name="slaHours" type="number" min="1" step="1" required>
+        </label>
+        <label>
+          Màu hiển thị
+          <input id="categoryColor" name="color" type="color" value="#0f766e" required>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button button-ghost" type="button" data-close-category-dialog>Hủy</button>
+        <button class="button button-primary" type="submit">Lưu nhóm dịch vụ</button>
+      </div>
+    </form>
+  </dialog>
+
+  <aside class="detail-drawer" id="detailDrawer" role="dialog" aria-labelledby="drawerName" aria-hidden="true">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">Chi tiết</p>
+        <h2 id="drawerName">Nhân viên</h2>
+      </div>
+      <button class="icon-button" type="button" data-close-drawer aria-label="Đóng">×</button>
+    </div>
+    <div id="drawerContent"></div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./assets/js/data.js"></script>
+  <script src="./assets/js/api-client.js"></script>
+  <script src="./assets/js/storage.js"></script>
+  <script src="./assets/js/helpers.js"></script>
+  <script src="./assets/js/analytics.js"></script>
+  <script src="./assets/js/validators.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>
