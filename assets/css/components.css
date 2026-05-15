@@ -223,12 +223,19 @@ select:disabled {
   color: var(--blue);
 }
 
+.status-terminated,
+.status-closed {
+  background: var(--surface-muted);
+  color: var(--text-soft);
+}
+
 .status-open,
 .priority-urgent {
   background: var(--rose-soft);
   color: var(--rose);
 }
 
+.status-triage,
 .status-inProgress,
 .priority-high {
   background: var(--amber-soft);

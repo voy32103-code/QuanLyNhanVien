@@ -96,7 +96,8 @@
     var labels = {
       active: "Đang làm",
       probation: "Thử việc",
-      leave: "Nghỉ phép"
+      leave: "Nghỉ phép",
+      terminated: "Nghỉ việc"
     };
     return labels[status] || "Không rõ";
   }
@@ -104,9 +105,11 @@
   function requestStatusLabel(status) {
     var labels = {
       open: "Mới",
+      triage: "Chờ phân loại",
       inProgress: "Đang xử lý",
       waiting: "Chờ phản hồi",
-      resolved: "Đã xong"
+      resolved: "Đã xong",
+      closed: "Đã đóng"
     };
     return labels[status] || "Không rõ";
   }

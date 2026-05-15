@@ -42,6 +42,12 @@
     deleteServiceCategory: api.deleteServiceCategory,
     createServiceRequest: api.createServiceRequest,
     updateServiceRequest: api.updateServiceRequest,
+    getServiceRequestTimeline: api.getServiceRequestTimeline,
+    addServiceRequestComment: api.addServiceRequestComment,
+    assignServiceRequest: api.assignServiceRequest,
+    updateServiceRequestStatus: api.updateServiceRequestStatus,
+    closeServiceRequest: api.closeServiceRequest,
+    reopenServiceRequest: api.reopenServiceRequest,
     advanceServiceRequest: api.advanceServiceRequest,
     deleteServiceRequest: api.deleteServiceRequest
   };

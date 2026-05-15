@@ -227,6 +227,20 @@ async function updateEmployee(id, payload) {
       afterData: employee
     });
 
+    if (Number(before.salary) !== Number(employee.salary)) {
+      await auditRepository.recordAudit(client, {
+        actorUserId: payload.actorUserId,
+        entityType: "employee",
+        entityId: id,
+        action: "salary_change",
+        beforeData: { salary: before.salary },
+        afterData: {
+          salary: employee.salary,
+          reason: payload.reason || null
+        }
+      });
+    }
+
     return employee;
   });
 }

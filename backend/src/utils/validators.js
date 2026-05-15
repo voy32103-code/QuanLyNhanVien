@@ -1,7 +1,7 @@
 const { parseDateInput } = require("./date");
 
-const employeeStatuses = ["active", "probation", "leave"];
-const serviceStatuses = ["open", "inProgress", "waiting", "resolved"];
+const employeeStatuses = ["active", "probation", "leave", "terminated"];
+const serviceStatuses = ["open", "triage", "inProgress", "waiting", "resolved", "closed"];
 const servicePriorities = ["urgent", "high", "normal"];
 const colorPattern = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
 

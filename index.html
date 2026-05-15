@@ -123,6 +123,7 @@
               <option value="active">Đang làm</option>
               <option value="probation">Thử việc</option>
               <option value="leave">Nghỉ phép</option>
+              <option value="terminated">Nghỉ việc</option>
             </select>
           </label>
           <label>
@@ -180,9 +181,11 @@
             <select id="serviceStatusFilter">
               <option value="all">Tất cả</option>
               <option value="open">Mới</option>
+              <option value="triage">Chờ phân loại</option>
               <option value="inProgress">Đang xử lý</option>
               <option value="waiting">Chờ phản hồi</option>
               <option value="resolved">Đã xong</option>
+              <option value="closed">Đã đóng</option>
             </select>
           </label>
           <label>
@@ -388,6 +391,7 @@
             <option value="active">Đang làm</option>
             <option value="probation">Thử việc</option>
             <option value="leave">Nghỉ phép</option>
+            <option value="terminated">Nghỉ việc</option>
           </select>
         </label>
         <label class="wide-field">
@@ -447,9 +451,11 @@
           Trạng thái
           <select id="requestStatus" name="status" required>
             <option value="open">Mới</option>
+            <option value="triage">Chờ phân loại</option>
             <option value="inProgress">Đang xử lý</option>
             <option value="waiting">Chờ phản hồi</option>
             <option value="resolved">Đã xong</option>
+            <option value="closed">Đã đóng</option>
           </select>
         </label>
         <label>

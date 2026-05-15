@@ -741,7 +741,7 @@
     elements.serviceTable.innerHTML = requests.map(function (request) {
       var actions = [];
 
-      if (can("handleServiceRequest")) {
+      if (can("handleServiceRequest") && request.status !== "closed") {
         actions.push("<button class=\"button button-secondary\" type=\"button\" data-request-action=\"advance\" data-id=\"" + request.id + "\">Chuyển</button>");
         actions.push("<button class=\"button button-secondary\" type=\"button\" data-request-action=\"edit\" data-id=\"" + request.id + "\">Sửa</button>");
       }
@@ -996,8 +996,8 @@
       high: 2,
       normal: 1
     };
-    var aResolved = a.status === "resolved";
-    var bResolved = b.status === "resolved";
+    var aResolved = a.status === "resolved" || a.status === "closed";
+    var bResolved = b.status === "resolved" || b.status === "closed";
 
     if (analytics.isRequestOverdue(a) !== analytics.isRequestOverdue(b)) {
       return analytics.isRequestOverdue(a) ? -1 : 1;

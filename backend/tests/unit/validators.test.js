@@ -63,6 +63,7 @@ test("validates employee business rules", () => {
   };
 
   assert.deepEqual(validateEmployeePayload(valid), []);
+  assert.deepEqual(validateEmployeePayload({ ...valid, status: "terminated" }), []);
 
   const invalid = validateEmployeePayload({
     ...valid,
@@ -90,6 +91,8 @@ test("validates service request date, status, priority, and text rules", () => {
   };
 
   assert.deepEqual(validateServiceRequestPayload(valid), []);
+  assert.deepEqual(validateServiceRequestPayload({ ...valid, status: "triage" }), []);
+  assert.deepEqual(validateServiceRequestPayload({ ...valid, status: "closed" }), []);
 
   const invalid = validateServiceRequestPayload({
     ...valid,

@@ -2,8 +2,8 @@
   "use strict";
 
   var helpers = window.HR_HELPERS;
-  var allowedStatuses = ["active", "probation", "leave"];
-  var allowedRequestStatuses = ["open", "inProgress", "waiting", "resolved"];
+  var allowedStatuses = ["active", "probation", "leave", "terminated"];
+  var allowedRequestStatuses = ["open", "triage", "inProgress", "waiting", "resolved", "closed"];
   var allowedPriorities = ["urgent", "high", "normal"];
   var colorPattern = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
 

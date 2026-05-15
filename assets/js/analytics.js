@@ -68,7 +68,7 @@
   }
 
   function isRequestOpen(request) {
-    return request.status !== "resolved";
+    return request.status !== "resolved" && request.status !== "closed";
   }
 
   function isRequestOverdue(request, today) {
@@ -85,7 +85,7 @@
       return isRequestOverdue(request);
     });
     var resolved = requests.filter(function (request) {
-      return request.status === "resolved";
+      return request.status === "resolved" || request.status === "closed";
     });
     var urgentOpen = open.filter(function (request) {
       return request.priority === "urgent";

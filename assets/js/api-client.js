@@ -141,11 +141,29 @@
     listServiceRequests: function (filters) {
       return request("/api/services/requests", { params: filters });
     },
+    getServiceRequestTimeline: function (id) {
+      return request("/api/services/requests/" + encodeURIComponent(id) + "/timeline");
+    },
     createServiceRequest: function (serviceRequest) {
       return request("/api/services/requests", { method: "POST", body: serviceRequest });
     },
     updateServiceRequest: function (id, serviceRequest) {
       return request("/api/services/requests/" + encodeURIComponent(id), { method: "PUT", body: serviceRequest });
+    },
+    addServiceRequestComment: function (id, comment) {
+      return request("/api/services/requests/" + encodeURIComponent(id) + "/comments", { method: "POST", body: comment });
+    },
+    assignServiceRequest: function (id, assignment) {
+      return request("/api/services/requests/" + encodeURIComponent(id) + "/assign", { method: "PATCH", body: assignment });
+    },
+    updateServiceRequestStatus: function (id, status) {
+      return request("/api/services/requests/" + encodeURIComponent(id) + "/status", { method: "PATCH", body: { status: status } });
+    },
+    closeServiceRequest: function (id) {
+      return request("/api/services/requests/" + encodeURIComponent(id) + "/close", { method: "PATCH" });
+    },
+    reopenServiceRequest: function (id) {
+      return request("/api/services/requests/" + encodeURIComponent(id) + "/reopen", { method: "PATCH" });
     },
     advanceServiceRequest: function (id) {
       return request("/api/services/requests/" + encodeURIComponent(id) + "/advance", { method: "PATCH" });

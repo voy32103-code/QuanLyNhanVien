@@ -27,9 +27,9 @@ async function getSummary(options = {}) {
   const serviceResult = await query(`
     SELECT
       COUNT(*)::int AS total,
-      COUNT(*) FILTER (WHERE status <> 'resolved')::int AS open,
-      COUNT(*) FILTER (WHERE status <> 'resolved' AND due_date < CURRENT_DATE)::int AS overdue,
-      COUNT(*) FILTER (WHERE status = 'resolved')::int AS resolved
+      COUNT(*) FILTER (WHERE status NOT IN ('resolved', 'closed'))::int AS open,
+      COUNT(*) FILTER (WHERE status NOT IN ('resolved', 'closed') AND due_date < CURRENT_DATE)::int AS overdue,
+      COUNT(*) FILTER (WHERE status IN ('resolved', 'closed'))::int AS resolved
     FROM service_requests
     WHERE deleted_at IS NULL
   `);
@@ -92,9 +92,9 @@ async function getServiceReport() {
       sc.sla_hours,
       sc.color,
       COUNT(sr.id)::int AS total,
-      COUNT(sr.id) FILTER (WHERE sr.status <> 'resolved')::int AS open,
-      COUNT(sr.id) FILTER (WHERE sr.status <> 'resolved' AND sr.due_date < CURRENT_DATE)::int AS overdue,
-      COUNT(sr.id) FILTER (WHERE sr.status = 'resolved')::int AS resolved
+      COUNT(sr.id) FILTER (WHERE sr.status NOT IN ('resolved', 'closed'))::int AS open,
+      COUNT(sr.id) FILTER (WHERE sr.status NOT IN ('resolved', 'closed') AND sr.due_date < CURRENT_DATE)::int AS overdue,
+      COUNT(sr.id) FILTER (WHERE sr.status IN ('resolved', 'closed'))::int AS resolved
     FROM service_categories sc
     LEFT JOIN service_requests sr ON sr.category_id = sc.id AND sr.deleted_at IS NULL
     WHERE sc.deleted_at IS NULL
